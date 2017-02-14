@@ -33,7 +33,9 @@ from gluster.swift.common.exceptions import FileOrDirNotFoundError, \
 from gluster.swift.obj.expirer import delete_tracker_object
 from swift.common.constraints import MAX_META_COUNT, MAX_META_OVERALL_SIZE
 from swift.common.swob import HTTPBadRequest
-from swift.common.utils import ThreadPool
+from gluster.swift.common.utils import ThreadPool
+from docutils.nodes import container
+from swift import account
 
 
 DATADIR = 'containers'
@@ -351,7 +353,7 @@ class DiskDir(DiskCommon):
 
         self.container = container
         self.datadir = os.path.join(self.datadir, self.container)
-
+        
         if self.account == 'gsexpiring':
             # Do not bother crawling the entire container tree just to update
             # object count and bytes used. Return immediately before metadata
@@ -399,7 +401,7 @@ class DiskDir(DiskCommon):
     def list_objects_iter(self, limit, marker, end_marker,
                           prefix, delimiter, path=None,
                           storage_policy_index=0,
-                          out_content_type=None):
+                          out_content_type=None,reverse=False):
         """
         Returns tuple of name, created_at, size, content_type, etag.
         """
@@ -426,7 +428,10 @@ class DiskDir(DiskCommon):
         else:
             # No objects in container , return empty list
             return container_list
-
+        
+        if marker and end_marker and reverse:
+            marker,end_marker = end_marker,marker
+            
         if end_marker:
             objects = filter_end_marker(objects, end_marker)
 
@@ -434,7 +439,7 @@ class DiskDir(DiskCommon):
             objects = filter_marker(objects, marker)
         elif prefix:
             objects = filter_prefix_as_marker(objects, prefix)
-
+            
         if prefix is None:
             # No prefix, we don't need to apply the other arguments, we just
             # return what we have.
@@ -451,7 +456,7 @@ class DiskDir(DiskCommon):
             else:
                 objects = filter_delimiter(objects, delimiter, prefix, marker,
                                            path)
-
+                
         if out_content_type == 'text/plain' or \
                 self.account == 'gsexpiring':
             # When out_content_type == 'text/plain':
@@ -471,6 +476,8 @@ class DiskDir(DiskCommon):
                 container_list.append((obj, '0', 0, 'text/plain', ''))
                 if len(container_list) >= limit:
                         break
+            if reverse:
+                container_list.reverse()
             return container_list
 
         count = 0
@@ -512,7 +519,8 @@ class DiskDir(DiskCommon):
             count += 1
             if count >= limit:
                 break
-
+        if reverse:
+            container_list.reverse()    
         return container_list
 
     def _update_object_count(self):
@@ -778,7 +786,7 @@ class DiskAccount(DiskCommon):
         return containers
 
     def list_containers_iter(self, limit, marker, end_marker,
-                             prefix, delimiter, response_content_type=None):
+                             prefix, delimiter, response_content_type=None,reverse=False):
         """
         Return tuple of name, object_count, bytes_used, 0(is_subdir).
         Used by account server.
@@ -793,7 +801,10 @@ class DiskAccount(DiskCommon):
         else:
             # No containers in account, return empty list
             return account_list
-
+        
+        if marker and end_marker and reverse:
+            marker,end_marker = end_marker,marker
+            
         if containers and end_marker:
             containers = filter_end_marker(containers, end_marker)
 
@@ -841,6 +852,8 @@ class DiskAccount(DiskCommon):
                 account_list.append((container, 0, 0, 0))
                 if len(account_list) >= limit:
                     break
+            if reverse:
+                account_list.reverse()
             return account_list
 
         count = 0
@@ -866,7 +879,8 @@ class DiskAccount(DiskCommon):
             count += 1
             if count >= limit:
                 break
-
+        if reverse:
+            account_list.reverse()
         return account_list
 
     def get_info(self):

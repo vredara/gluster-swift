@@ -41,7 +41,8 @@ if not reseller_prefix.endswith('_'):
 
 class Ring(ring.Ring):
 
-    def __init__(self, serialized_path, reload_time=15, ring_name=None):
+    def __init__(self, serialized_path, reload_time=15, ring_name=None,
+                 validation_hook=None):
         self.false_node = {'zone': 1, 'weight': 100.0, 'ip': '127.0.0.1',
                            'id': 0, 'meta': '', 'device': 'volume_not_in_ring',
                            'port': 6012}
@@ -111,7 +112,6 @@ class Ring(ring.Ring):
         except ValueError:
             self.account_list.append(account)
             part = self.account_list.index(account)
-
         return part
 
     def get_nodes(self, account, container=None, obj=None):

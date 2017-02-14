@@ -22,6 +22,8 @@ from swift.proxy.server import Application, mimetypes  # noqa
 from swift.proxy.controllers import AccountController  # noqa
 from swift.proxy.controllers import ObjectControllerRouter  # noqa
 from swift.proxy.controllers import ContainerController  # noqa
+from swift.proxy.controllers.base import Controller
+from swift.common.storage_policy import BaseStoragePolicy #monkeypatch
 
 
 def app_factory(global_conf, **local_conf):  # noqa

@@ -496,7 +496,7 @@ class FakeLogger(logging.Logger, object):
         self.log_dict = defaultdict(list)
         self.lines_dict = {'critical': [], 'error': [], 'info': [],
                            'warning': [], 'debug': []}
-
+    clear = _clear
     def get_lines_for_level(self, level):
         if level not in self.lines_dict:
             raise KeyError(

@@ -27,16 +27,16 @@ cleanup()
 {
         sudo service memcached stop
         sudo_env swift-init main stop
-        sudo rm -rf /etc/swift > /dev/null 2>&1
-        sudo rm -rf /mnt/gluster-object/test{,2}/* > /dev/null 2>&1
+        #sudo rm -rf /etc/swift > /dev/null 2>&1
+        #sudo rm -rf /mnt/gluster-object/test{,2}/* > /dev/null 2>&1
         sudo setfattr -x user.swift.metadata /mnt/gluster-object/test{,2} > /dev/null 2>&1
         gswauth_cleanup
 }
 
 gswauth_cleanup()
 {
-        sudo rm -rf /mnt/gluster-object/gsmetadata/.* > /dev/null 2>&1
-        sudo rm -rf /mnt/gluster-object/gsmetadata/* > /dev/null 2>&1
+        #sudo rm -rf /mnt/gluster-object/gsmetadata/.* > /dev/null 2>&1
+        #sudo rm -rf /mnt/gluster-object/gsmetadata/* > /dev/null 2>&1
         sudo setfattr -x user.swift.metadata /mnt/gluster-object/gsmetadata > /dev/null 2>&1
 }
 
@@ -108,7 +108,7 @@ nosetests -v --exe \
 	--xunit-file functional_tests_result/gluster-swift-gswauth-functional-TC-report.xml \
     --with-html-output \
     --html-out-file functional_tests_result/gluster-swift-gswauth-functional-result.html \
-    test/functional_auth/gswauth || fail "Functional gswauth test failed"
+    test/functional_auth/gswauth/test_gswauth_cli.py:TestCleanUPToken.testCleanUPToken || fail "Functional gswauth test failed"
 
 run_generic_tests
 
