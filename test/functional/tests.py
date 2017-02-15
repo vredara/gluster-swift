@@ -2442,6 +2442,7 @@ class TestFile(Base):
             self.assertEqual(etag, info['etag'])
 
     def test_POST(self):
+	raise SkipTest("Gluster preserves orig sys metadata - invalid test")
         # verify consistency between object and container listing metadata
         file_name = Utils.create_name()
         file_item = self.env.container.file(file_name)
@@ -3222,6 +3223,7 @@ class TestSlo(Base):
         self.assertEqual('e', file_contents[-1])
 
     def test_slo_container_listing(self):
+	raise SkipTest("Gluster preserves orig sys metadata - invalid test")	
         # the listing object size should equal the sum of the size of the
         # segments, not the size of the manifest body
         file_item = self.env.container.file(Utils.create_name())
