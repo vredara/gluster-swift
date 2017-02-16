@@ -608,7 +608,7 @@ class DiskFile(object):
     def timestamp(self):
         if self._metadata is None:
             raise DiskFileNotOpen()
-        return Timestamp(self._metadata.get('X-Timestamp'))
+        return Timestamp(self._metadata.get(X_TIMESTAMP))
 
     @property
     def data_timestamp(self):
@@ -625,7 +625,7 @@ class DiskFile(object):
                                  called on this instance.
         """
         if self._metadata:
-            return Timestamp(self._metadata.get('X-Timestamp'))
+            return Timestamp(self._metadata.get(X_TIMESTAMP))
         return None
 
     @property
@@ -636,13 +636,13 @@ class DiskFile(object):
     def content_type(self):
         if self._metadata is None:
             raise DiskFileNotOpen()
-        return self._metadata.get('Content-Type')
+        return self._metadata.get(X_CONTENT_TYPE)
 
     @property
     def content_type_timestamp(self):
         if self._metadata is None:
             raise DiskFileNotOpen()
-        t = self._metadata.get('Content-Type-Timestamp') or self._metadata.get('X-Timestamp')
+        t = self._metadata.get('Content-Type-Timestamp') or self._metadata.get(X_TIMESTAMP)
         return Timestamp(t)
     def open(self):
         """
